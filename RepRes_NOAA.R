@@ -1,0 +1,673 @@
+#Read the datafile
+StormDataRaw <- read.table(file = "repdata_data_StormData.csv.bz2", header = TRUE, sep = ",")
+
+#Dimensions
+dim(StormDataRaw)
+
+#Structure
+str(StormDataRaw)
+
+#First, some variables will be processed in order to handle them better
+
+StormDataProcessed <- StormDataRaw[, c("STATE", 
+                                       "BGN_DATE",
+                                       "EVTYPE",
+                                       "END_DATE",
+                                       "FATALITIES",
+                                       "INJURIES",
+                                       "PROPDMG",
+                                       "PROPDMGEXP",
+                                       "CROPDMG",
+                                       "CROPDMGEXP",
+                                       "REMARKS",
+                                       "REFNUM")]
+
+
+StormDataProcessed$BGN_DATE <- as.Date(StormDataProcessed$BGN_DATE, format = "%m/%d/%Y")
+StormDataProcessed$END_DATE <- as.Date(StormDataProcessed$END_DATE, format = "%m/%d/%Y")
+
+#SUBSETTING DATES
+StormDataProcessed <- subset(x = StormDataProcessed, BGN_DATE >= "1996-01-01")
+#N1 <- as.Date(StormData$BGN_DATE, format = "%m/%d/%Y")
+
+#CREATE NEW EVENT VARIABLE
+StormDataProcessed$EVENT <- NA 
+
+#Processing of the EVTYPE variable
+StormDataProcessed$EVTYPE <- toupper(StormDataProcessed$EVTYPE)
+
+#There are only 483 events left to organize
+
+#WINTER WEATHER
+StormDataProcessed$EVENT[grepl(pattern = "WINTRY MIX", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "WINTERY MIX", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "WINTER WEATHER/MIX", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "WINTER WEATHER MIX", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "WINTER WEATHER", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "WINTER MIX", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "UNUSUALLY LATE SNOW", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "UNUSUALLY COLD", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LIGHT SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LIGHT SNOW/FREEZING PRECIP", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LIGHT SNOW/FLURRIES", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LIGHT SNOW", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LIGHT FREEZING RAIN", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LATE SNOW", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LATE SEASON SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LATE SEASON SNOW", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "LATE-SEASON SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "FIRST SNOW", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "EARLY SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "COOL SPELL", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "BLOWING SNOW", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+StormDataProcessed$EVENT[grepl(pattern = "WINTER STORM", x = StormDataProcessed$EVTYPE)] <- "WINTER WEATHER"
+
+
+#STRONG WIND
+StormDataProcessed$EVENT[grepl(pattern = "WND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WIND GUSTS", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WINDS", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WIND DAMAGE", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WIND CHILL", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WIND AND WAVE", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WIND ADVISORY", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WHIRLWIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "WAKE LOW WIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "BLOW-OUT TIDES", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "BLOW-OUT TIDE", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+
+#WILDFIRE
+StormDataProcessed$EVENT[grepl(pattern = "WILDFIRE", x = StormDataProcessed$EVTYPE)] <- "WILDFIRE"
+StormDataProcessed$EVENT[grepl(pattern = "WILD/FOREST FIRE", x = StormDataProcessed$EVTYPE)] <- "WILDFIRE"
+StormDataProcessed$EVENT[grepl(pattern = "SMOKE", x = StormDataProcessed$EVTYPE)] <- "WILDFIRE"
+StormDataProcessed$EVENT[grepl(pattern = "DENSE SMOKE", x = StormDataProcessed$EVTYPE)] <- "WILDFIRE"
+StormDataProcessed$EVENT[grepl(pattern = "BRUSH FIRE", x = StormDataProcessed$EVTYPE)] <- "WILDFIRE"
+
+#HEAVY RAIN
+StormDataProcessed$EVENT[grepl(pattern = "WET YEAR", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "WET MONTH", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "WET MICROBURST", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "WET MICOBURST", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONAL RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY WET", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "TORRENTIAL RAINFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD RAINFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD PRECIPITATION", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "RAIN DAMAGE", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "RAIN (HEAVY)", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "PROLONGED RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "MONTHLY RAINFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "MONTHLY PRECIPITATION", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "MICROBURST", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "LOCALLY HEAVY RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY RAINFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY RAIN/WIND", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY RAIN/HIGH SURF", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY RAIN EFFECTS", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY RAIN AND WIND", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY PRECIPITATION", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVE RAINFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVE RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "EARLY RAIN", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "DRY MICROBURST", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+StormDataProcessed$EVENT[grepl(pattern = "DOWNBURST", x = StormDataProcessed$EVTYPE)] <- "HEAVY RAIN"
+
+
+#WATERSPOUT
+StormDataProcessed$EVENT[grepl(pattern = "WATERSPOUT", x = StormDataProcessed$EVTYPE)] <- "WATERSPOUT"
+StormDataProcessed$EVENT[grepl(pattern = "WATERSPOUTS", x = StormDataProcessed$EVTYPE)] <- "WATERSPOUT"
+
+#HEAT
+StormDataProcessed$EVENT[grepl(pattern = "WARM WEATHER", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "VERY WARM", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNUSUALLY WARM", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNUSUAL/RECORD WARMTH", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNUSUAL WARMTH", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY WARM/WET", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY WARM YEAR", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY WARM & WET", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY WARM", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY HOT", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "TEMPERATURE RECORD", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD WARMTH", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD WARM TEMPS.", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD WARM", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD TEMPERATURES", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD TEMPERATURE", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD HIGH", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD HEAT", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "PROLONG WARMTH", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HYPERTHERMIA/EXPOSURE", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HOT WEATHER", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HOT SPELL", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HOT AND DRY", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HEATBURST", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HEAT WAVE", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "HEAT", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVE HEAT", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+StormDataProcessed$EVENT[grepl(pattern = "ABNORMAL WARMTH", x = StormDataProcessed$EVTYPE)] <- "HEAT"
+
+
+#TORNADO
+StormDataProcessed$EVENT[grepl(pattern = "WALL CLOUD", x = StormDataProcessed$EVTYPE)] <- "TORNADO"
+StormDataProcessed$EVENT[grepl(pattern = "TORNADO DEBRIS", x = StormDataProcessed$EVTYPE)] <- "TORNADO"
+StormDataProcessed$EVENT[grepl(pattern = "TORNADO", x = StormDataProcessed$EVTYPE)] <- "TORNADO"
+StormDataProcessed$EVENT[grepl(pattern = "LANDSPOUT", x = StormDataProcessed$EVTYPE)] <- "TORNADO"
+
+#FUNNEL CLOUD
+StormDataProcessed$EVENT[grepl(pattern = "FUNNEL CLOUDS", x = StormDataProcessed$EVTYPE)] <- "FUNNEL CLOUD"
+StormDataProcessed$EVENT[grepl(pattern = "FUNNEL CLOUD", x = StormDataProcessed$EVTYPE)] <- "FUNNEL CLOUD"
+
+#VOLCANIC ASH
+StormDataProcessed$EVENT[grepl(pattern = "VOLCANIC ERUPTION", x = StormDataProcessed$EVTYPE)] <- "VOLCANIC ASH"
+StormDataProcessed$EVENT[grepl(pattern = "VOLCANIC ASHFALL", x = StormDataProcessed$EVTYPE)] <- "VOLCANIC ASH"
+StormDataProcessed$EVENT[grepl(pattern = "VOLCANIC ASH PLUME", x = StormDataProcessed$EVTYPE)] <- "VOLCANIC ASH"
+StormDataProcessed$EVENT[grepl(pattern = "VOLCANIC ASH", x = StormDataProcessed$EVTYPE)] <- "VOLCANIC ASH"
+StormDataProcessed$EVENT[grepl(pattern = "VOG", x = StormDataProcessed$EVTYPE)] <- "VOLCANIC ASH"
+
+#DROUGHT
+StormDataProcessed$EVENT[grepl(pattern = "VERY DRY", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY WARM AND DRY", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY DRY", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD LOW RAINFALL", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD DRYNESS", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD DRY MONTH", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "MILD AND DRY PATTERN", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVELY DRY", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVE HEAT/DROUGHT", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DRYNESS", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DRY WEATHER", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DRY SPELL", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DRY CONDITIONS", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DRY", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DROUGHT", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "DRIEST MONTH", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+StormDataProcessed$EVENT[grepl(pattern = "ABNORMALLY DRY", x = StormDataProcessed$EVTYPE)] <- "DROUGHT"
+
+#FLOOD
+StormDataProcessed$EVENT[grepl(pattern = "URBAN/STREET FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "URBAN/SML STREAM FLDG", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "URBAN/SML STREAM FLD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "URBAN/SML STRM FLD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "URBAN FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "URBAN FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "TIDAL FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "STREET FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "SNOWMELT FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "SML STREAM FLD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "RIVER FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "RIVER FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "MINOR FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLOOD/STRONG WIND", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "EROSION/CSTL FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "EROSION/CSTL FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "URBAN/SMALL STRM FLDG", x = StormDataProcessed$EVTYPE)] <- "FLOOD"
+
+
+
+#COLD/WIND CHILL
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONAL LOW TEMP", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY COOL & WET", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY COOL", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLY COLD", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "UNSEASONABLE COLD", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "THUNDERSNOW SHOWER", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD COOL", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD COLD", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD  COLD", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "PROLONG COLD", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "MONTHLY TEMPERATURE", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD/WIND CHILL", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD WIND CHILL TEMPERATURES", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD WEATHER", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD TEMPERATURES", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD TEMPERATURE", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD AND SNOW", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "COLD", x = StormDataProcessed$EVTYPE)] <- "COLD/WIND CHILL"
+
+#HURRICANE (TYPHOON)
+StormDataProcessed$EVENT[grepl(pattern = "TYPHOON", x = StormDataProcessed$EVTYPE)] <- "HURRICANE (TYPHOON)"
+StormDataProcessed$EVENT[grepl(pattern = "HURRICANE/TYPHOON", x = StormDataProcessed$EVTYPE)] <- "HURRICANE (TYPHOON)"
+StormDataProcessed$EVENT[grepl(pattern = "HURRICANE EDOUARD", x = StormDataProcessed$EVTYPE)] <- "HURRICANE (TYPHOON)"
+StormDataProcessed$EVENT[grepl(pattern = "HURRICANE", x = StormDataProcessed$EVTYPE)] <- "HURRICANE (TYPHOON)"
+
+
+#TSUNAMI
+StormDataProcessed$EVENT[grepl(pattern = "TSUNAMI", x = StormDataProcessed$EVTYPE)] <- "TSUNAMI"
+
+#THUNDERSTORM WIND
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WND", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WINDS", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND/HAIL", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND G45", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND AND LIGHTING", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND 45", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND 40", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND (G45)", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND (G40)", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND (G35)", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND (G41)", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND  (G45)", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM WIND", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM HEAVY RAIN", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "TSTM", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "THUNDERSTORMS", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "THUNDERSTORM WIND (G40)", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "THUNDERSTORM WIND", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "THUNDERSTORM", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "SEVERE THUNDERSTORMS", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "SEVERE THUNDERSTORM", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "NON TSTM WIND", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "NON-TSTM WIND", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "NON-SEVERE WIND DAMAGE", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "NO SEVERE WEATHER", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "METRO STORM, MAY 26", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY THUNDERSTORM WINDS", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY THUNDERSTORM WIND", x = StormDataProcessed$EVTYPE)] <- "THUNDERSTORM WIND"
+
+
+#TROPICAL STORM
+StormDataProcessed$EVENT[grepl(pattern = "TROPICAL STORM", x = StormDataProcessed$EVTYPE)] <- "TROPICAL STORM"
+StormDataProcessed$EVENT[grepl(pattern = "REMNANTS OF FLOYD", x = StormDataProcessed$EVTYPE)] <- "TROPICAL STORM"
+
+
+#TROPICAL DEPRESSION
+StormDataProcessed$EVENT[grepl(pattern = "TROPICAL DEPRESSION", x = StormDataProcessed$EVTYPE)] <- "TROPICAL DEPRESSION"
+
+#TEMPERATURE RECORD
+StormDataProcessed$EVENT[grepl(pattern = "TEMPERATURE RECORD", x = StormDataProcessed$EVTYPE)] <- "TEMPERATURE RECORD"
+
+#STRONG WIND
+StormDataProcessed$EVENT[grepl(pattern = "STRONG WINDS", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "STRONG WIND GUST", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "STRONG WIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY WINDS", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY WIND/RAIN", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY WIND/HVY RAIN", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY WIND/HAIL", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY WIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GUSTY LAKE WIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+StormDataProcessed$EVENT[grepl(pattern = "GRADIENT WIND", x = StormDataProcessed$EVTYPE)] <- "STRONG WIND"
+
+
+#STORM SURGE/TIDE
+StormDataProcessed$EVENT[grepl(pattern = "STORM SURGE/TIDE", x = StormDataProcessed$EVTYPE)] <- "STORM SURGE/TIDE"
+StormDataProcessed$EVENT[grepl(pattern = "STORM SURGE", x = StormDataProcessed$EVTYPE)] <- "STORM SURGE/TIDE"
+StormDataProcessed$EVENT[grepl(pattern = "ASTRONOMICAL HIGH TIDE", x = StormDataProcessed$EVTYPE)] <- "STORM SURGE/TIDE"
+
+#HEAVY SNOW
+StormDataProcessed$EVENT[grepl(pattern = "SNOW/ICE", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW/BLOWING SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW SQUALLS", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW SQUALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW/ICE", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW ADVISORY", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW ACCUMULATION", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "SEASONAL SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD WINTER SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "RECORD MAY SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "MOUNTAIN SNOWS", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "MONTHLY SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "MODERATE SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "MODERATE SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SNOW SQUALLS", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SNOW SHOWER", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVE SNOW", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "ACCUMULATED SNOWFALL", x = StormDataProcessed$EVTYPE)] <- "HEAVY SNOW"
+
+#SLEET
+StormDataProcessed$EVENT[grepl(pattern = "SNOW/SLEET", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW/FREEZING RAIN", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW SHOWERS", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW  AND SLEET", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "SLEET/FREEZING RAIN", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "SLEET STORM", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "SLEET", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "RAIN/SNOW", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "MIXED PRECIPITATION", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "MIXED PRECIP", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "ICE/SNOW", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "FREEZING SPRAY", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "FREEZING RAIN/SLEET", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "FREEZING RAIN", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "FREEZING DRIZZLE", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+StormDataProcessed$EVENT[grepl(pattern = "FALLING SNOW/ICE", x = StormDataProcessed$EVTYPE)] <- "SLEET"
+
+
+
+#HAIL
+StormDataProcessed$EVENT[grepl(pattern = "SMALL HAIL", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW AND ICE", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+StormDataProcessed$EVENT[grepl(pattern = "NON SEVERE HAIL", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+StormDataProcessed$EVENT[grepl(pattern = "LATE SEASON HAIL", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+StormDataProcessed$EVENT[grepl(pattern = "HAIL/WIND", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+StormDataProcessed$EVENT[grepl(pattern = "HAIL(0.75)", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+StormDataProcessed$EVENT[grepl(pattern = "HAIL", x = StormDataProcessed$EVTYPE)] <- "HAIL"
+
+#SEICHE
+StormDataProcessed$EVENT[grepl(pattern = "SEICHE", x = StormDataProcessed$EVTYPE)] <- "SEICHE"
+
+#DUST STORM
+StormDataProcessed$EVENT[grepl(pattern = "SAHARAN DUST", x = StormDataProcessed$EVTYPE)] <- "DUST STORM"
+
+#RIP CURRENT
+StormDataProcessed$EVENT[grepl(pattern = "RIP CURRENTS", x = StormDataProcessed$EVTYPE)] <- "RIP CURRENT"
+StormDataProcessed$EVENT[grepl(pattern = "RIP CURRENT", x = StormDataProcessed$EVTYPE)] <- "RIP CURRENT"
+
+#DEBRIS FLOW
+StormDataProcessed$EVENT[grepl(pattern = "ROCK SLIDE", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "MUDSLIDES", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "MUDSLIDE/LANDSLIDE", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "MUDSLIDE", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "MUD SLIDE", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "LANDSLUMP", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "LANDSLIDES", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+StormDataProcessed$EVENT[grepl(pattern = "LANDSLIDE", x = StormDataProcessed$EVTYPE)] <- "DEBRIS FLOW"
+
+#FROST/FREEZE
+StormDataProcessed$EVENT[grepl(pattern = "PATCHY ICE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "PATCHY DENSE FOG", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "LATE FREEZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICY ROADS", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE ROADS", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE PELLETS", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE ON ROAD", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE JAM FLOOD (MINOR", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE JAM", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE FOG", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "ICE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "HYPOTHERMIA/EXPOSURE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "HARD FREEZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "GLAZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "FROST/FREEZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "FROST", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "FREEZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "FIRST FROST", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "EARLY FROST", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "DRIFTING SNOW", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "DAMAGING FREEZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "COLD AND FROST", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "BLACK ICE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+StormDataProcessed$EVENT[grepl(pattern = "AGRICULTURAL FREEZE", x = StormDataProcessed$EVTYPE)] <- "FROST/FREEZE"
+
+#OTHER
+#SUMMARY - THESE SUMMARIES DON'T ADD ANYTHING TO THE DATABASE, AND MOST IMPORTANT, THEY HAVE A DETAIL INSIDE THE DATABASE
+StormDataProcessed$EVENT[grepl(pattern = "OTHER", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "SUMMARY", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "RED FLAG FIRE WX", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "RED FLAG CRITERIA", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "NORTHERN LIGHTS", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "MONTHLY TEMPERATURE", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "EXTREMELY WET", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+StormDataProcessed$EVENT[grepl(pattern = "ABNORMALLY WET", x = StormDataProcessed$EVTYPE)] <- "OTHER"
+
+
+#NONE
+StormDataProcessed$EVENT[grepl(pattern = "NONE", x = StormDataProcessed$EVTYPE)] <- "NONE"
+
+#MARINE THUNDERSTORM WIND
+StormDataProcessed$EVENT[grepl(pattern = "MARINE TSTM WIND", x = StormDataProcessed$EVTYPE)] <- "MARINE THUNDERSTORM WIND"
+StormDataProcessed$EVENT[grepl(pattern = "MARINE THUNDERSTORM WIND", x = StormDataProcessed$EVTYPE)] <- "MARINE THUNDERSTORM WIND"
+
+#MARINE STRONG WIND
+StormDataProcessed$EVENT[grepl(pattern = "MARINE STRONG WIND", x = StormDataProcessed$EVTYPE)] <- "MARINE STRONG WIND"
+
+#MARINE HIGH WIND
+StormDataProcessed$EVENT[grepl(pattern = "MARINE HIGH WIND", x = StormDataProcessed$EVTYPE)] <- "MARINE HIGH WIND"
+
+#MARINE HAIL
+StormDataProcessed$EVENT[grepl(pattern = "MARINE HAIL", x = StormDataProcessed$EVTYPE)] <- "MARINE HAIL"
+
+#HIGH SURF
+StormDataProcessed$EVENT[grepl(pattern = "MARINE ACCIDENT", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "ROUGH SURF", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "ROUGH SEAS", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "ROGUE WAVE", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH WATER", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH SWELLS", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH SURF ADVISORY", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH SURF ADVISORIES", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH SURF", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH SEAS", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH SWELLS", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SURF/HIGH SURF", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SURF AND WIND", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SURF", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HEAVY SEAS", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HAZARDOUS SURF", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "DROWNING", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH  SWELLS", x = StormDataProcessed$EVTYPE)] <- "HIGH SURF"
+
+#LIGHTNING
+StormDataProcessed$EVENT[grepl(pattern = "LIGHTNING", x = StormDataProcessed$EVTYPE)] <- "LIGHTNING"
+
+#LAKESHORE FLOOD
+StormDataProcessed$EVENT[grepl(pattern = "LAKESHORE FLOOD", x = StormDataProcessed$EVTYPE)] <- "LAKESHORE FLOOD"
+
+#LAKE-EFFECT SNOW
+StormDataProcessed$EVENT[grepl(pattern = "LAKE EFFECT SNOW", x = StormDataProcessed$EVTYPE)] <- "LAKE-EFFECT SNOW"
+StormDataProcessed$EVENT[grepl(pattern = "LAKE-EFFECT SNOW", x = StormDataProcessed$EVTYPE)] <- "LAKE-EFFECT SNOW"
+
+#BLIZZARD
+StormDataProcessed$EVENT[grepl(pattern = "ICESTORM/BLIZZARD", x = StormDataProcessed$EVTYPE)] <- "BLIZZARD"
+
+#ICE STORM
+StormDataProcessed$EVENT[grepl(pattern = "ICE STORM", x = StormDataProcessed$EVTYPE)] <- "ICE STORM"
+
+#HIGH WIND
+StormDataProcessed$EVENT[grepl(pattern = "HIGH WINDS", x = StormDataProcessed$EVTYPE)] <- "HIGH WIND"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH WIND (G40)", x = StormDataProcessed$EVTYPE)] <- "HIGH WIND"
+StormDataProcessed$EVENT[grepl(pattern = "HIGH WIND", x = StormDataProcessed$EVTYPE)] <- "HIGH WIND"
+
+#FREEZING FOG
+StormDataProcessed$EVENT[grepl(pattern = "FREEZING FOG", x = StormDataProcessed$EVTYPE)] <- "FREEZING FOG"
+
+#DENSE FOG
+StormDataProcessed$EVENT[grepl(pattern = "FOG", x = StormDataProcessed$EVTYPE)] <- "DENSE FOG"
+StormDataProcessed$EVENT[grepl(pattern = "DENSE FOG", x = StormDataProcessed$EVTYPE)] <- "DENSE FOG"
+
+
+#FLASH FLOOD
+StormDataProcessed$EVENT[grepl(pattern = "FLOOD/FLASH/FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLOOD/FLASH/FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLOOD/FLASH FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLASH FLOODING", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLASH FLOOD/FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "FLASH FLOOD", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "DAM BREAK", x = StormDataProcessed$EVTYPE)] <- "FLASH FLOOD"
+
+
+#EXTREME COLD/WIND CHILL
+StormDataProcessed$EVENT[grepl(pattern = "EXTREME WINDCHILL TEMPERATURES", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "EXTREME WINDCHILL", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "EXTREME WIND CHILL", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "EXTREME COLD/WIND CHILL", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "EXTREME COLD", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "EXTENDED COLD", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "EXCESSIVE COLD", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "SNOW DROUGHT", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "BITTER WIND CHILL TEMPERATURES", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+StormDataProcessed$EVENT[grepl(pattern = "BITTER WIND CHILL", x = StormDataProcessed$EVTYPE)] <- "EXTREME COLD/WIND CHILL"
+
+
+#DUST STORM
+StormDataProcessed$EVENT[grepl(pattern = "DUST STORM", x = StormDataProcessed$EVTYPE)] <- "DUST STORM"
+StormDataProcessed$EVENT[grepl(pattern = "BLOWING DUST", x = StormDataProcessed$EVTYPE)] <- "DUST STORM"
+
+#DUST DEVIL
+StormDataProcessed$EVENT[grepl(pattern = "DUST DEVIL", x = StormDataProcessed$EVTYPE)] <- "DUST DEVIL"
+StormDataProcessed$EVENT[grepl(pattern = "DUST DEVEL", x = StormDataProcessed$EVTYPE)] <- "DUST DEVIL"
+
+#COASTAL FLOOD
+StormDataProcessed$EVENT[grepl(pattern = "CSTL FLOODING/EROSION", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTALSTORM", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTALFLOOD", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTAL STORM", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTAL FLOODING/EROSION", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTAL FLOODING", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTAL FLOOD", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTAL EROSION", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "COASTAL  FLOODING/EROSION", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+StormDataProcessed$EVENT[grepl(pattern = "BEACH EROSION", x = StormDataProcessed$EVTYPE)] <- "COASTAL FLOOD"
+
+#BLIZZARD
+StormDataProcessed$EVENT[grepl(pattern = "BLIZZARD", x = StormDataProcessed$EVTYPE)] <- "BLIZZARD"
+
+#AVALANCHE
+StormDataProcessed$EVENT[grepl(pattern = "AVALANCHE", x = StormDataProcessed$EVTYPE)] <- "AVALANCHE"
+
+#ASTRONOMICAL LOW TIDE
+StormDataProcessed$EVENT[grepl(pattern = "ASTRONOMICAL LOW TIDE", x = StormDataProcessed$EVTYPE)] <- "ASTRONOMICAL LOW TIDE"
+
+#NEW VARIABLES
+#CASUALTIES
+StormDataProcessed$CASUALTIES <- StormDataProcessed$FATALITIES + StormDataProcessed$INJURIES
+
+#PROPDMGVALUE
+StormDataProcessed$PROPDMGVALUE <- 0
+
+#CROPDMGVALUE
+StormDataProcessed$CROPDMGVALUE <- 0
+
+#Changes to the PROPDMGEXP and CROPDMGEXP
+
+StormDataProcessed$PROPDMGEXP <- as.character(StormDataProcessed$PROPDMGEXP)
+
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "-"] <- 0
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "?"] <- 0
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "+"] <- 0
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "0"] <- 1
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "1"] <- 10
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "2"] <- 100
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "3"] <- 1000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "4"] <- 10000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "5"] <- 100000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "6"] <- 1000000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "7"] <- 10000000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "8"] <- 100000000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "B"] <- 1000000000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "h"] <- 100
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "H"] <- 100
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "K"] <- 1000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "m"] <- 1000000
+StormDataProcessed$PROPDMGEXP[StormDataProcessed$PROPDMGEXP == "M"] <- 1000000
+
+StormDataProcessed$PROPDMGEXP <- as.numeric(StormDataProcessed$PROPDMGEXP)
+
+StormDataProcessed$CROPDMGEXP <- as.character(StormDataProcessed$CROPDMGEXP)
+
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "?"] <- 0
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "0"] <- 1
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "2"] <- 100
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "B"] <- 1000000000
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "k"] <- 1000
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "K"] <- 1000
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "m"] <- 1000000
+StormDataProcessed$CROPDMGEXP[StormDataProcessed$CROPDMGEXP == "M"] <- 1000000
+
+StormDataProcessed$CROPDMGEXP <- as.numeric(StormDataProcessed$CROPDMGEXP)
+
+#PROPDMGVALUE
+StormDataProcessed$PROPDMGVALUE <- StormDataProcessed$PROPDMG*StormDataProcessed$PROPDMGEXP
+
+StormDataProcessed$PROPDMGVALUE[is.na(StormDataProcessed$PROPDMGVALUE) == TRUE] <- 0
+
+#CROPDMGVALUE
+StormDataProcessed$CROPDMGVALUE <- StormDataProcessed$CROPDMG*StormDataProcessed$CROPDMGEXP
+
+StormDataProcessed$CROPDMGVALUE[is.na(StormDataProcessed$CROPDMGVALUE) == TRUE] <- 0
+
+#TOTALDMGVALUE
+StormDataProcessed$TOTALDMGVALUE <- StormDataProcessed$PROPDMGVALUE + StormDataProcessed$CROPDMGVALUE
+
+##DATA ANALYSIS
+
+library(dplyr)
+library(ggplot2)
+
+#Q1 IMPACT ON PEOPLE'S HEALTH
+
+TOTALCASUALTIES <- StormDataProcessed %>% group_by(EVENT) %>% summarize(TOTALCAS = sum(CASUALTIES, na.rm = TRUE)) 
+
+head(TOTALCASUALTIES)
+
+TOTALCASUALTIES <- TOTALCASUALTIES[order(TOTALCASUALTIES$TOTALCAS ,decreasing = TRUE),]
+
+
+#PARETO'S PRINCIPLE 
+
+TotalSumCasualties <- sum(TOTALCASUALTIES$TOTALCAS, na.rm = TRUE)
+
+TOTALCASUALTIES$PERCENTAGE <- round(x = TOTALCASUALTIES$TOTALCAS /TotalSumCasualties, digits = 3)
+
+TOTALCASUALTIES$CUMULATIVE <- 0
+
+i <- 0
+
+for (i in 1:nrow(TOTALCASUALTIES)){
+  if (i == 1){
+    TOTALCASUALTIES[i, 4] <- TOTALCASUALTIES[i, 3]
+  }
+  else {
+    TOTALCASUALTIES[i, 4] <- TOTALCASUALTIES[i, 3] + TOTALCASUALTIES[i-1, 4]
+  }
+}
+
+#PLOTTING
+
+TOTALCASUALTIES %>% subset(CUMULATIVE <= 0.81) %>% ggplot(aes(x = EVENT, y = TOTALCAS )) +
+  geom_bar(stat = "identity", aes(fill = TOTALCAS)) + 
+  ggtitle("Total casualties done by Storm Events") +
+  xlab("Storm Events") + 
+  ylab("Total Casualties") + 
+  theme(axis.text.x = element_text(angle = 90))
+
+#Q2. EVENTS WITH GREATEST ECONOMIC IMPACT
+
+TOTALECONOMICIMPACT <- StormDataProcessed %>% group_by(EVENT) %>% summarize(TOTALECONOMIC = sum(TOTALDMGVALUE, na.rm = TRUE))
+
+head(TOTALECONOMICIMPACT)
+
+TOTALECONOMICIMPACT <- TOTALECONOMICIMPACT[order(TOTALECONOMICIMPACT$TOTALECONOMIC, decreasing = TRUE), ]
+
+#PARETO'S PRINCIPLE
+
+TotalSumEconomic <- sum(TOTALECONOMICIMPACT$TOTALECONOMIC, na.rm = TRUE)
+
+TOTALECONOMICIMPACT$PERCENTAGE <- round(x = TOTALECONOMICIMPACT$TOTALECONOMIC/TotalSumEconomic, digits = 3)
+
+TOTALECONOMICIMPACT$CUMULATIVE <- 0 
+
+i <- 0
+
+for (i in 1:nrow(TOTALECONOMICIMPACT)){
+  if (i == 1){
+    TOTALECONOMICIMPACT[i, 4] <- TOTALECONOMICIMPACT[i, 3]
+  }
+  else {
+    TOTALECONOMICIMPACT[i, 4] <- TOTALECONOMICIMPACT[i, 3] + TOTALECONOMICIMPACT[i-1, 4]
+  }
+}
+
+#PLOTTING
+
+TOTALECONOMICIMPACT %>% subset(CUMULATIVE <= 0.812) %>% ggplot(aes(x = EVENT, y = TOTALECONOMIC/1000000)) +
+  geom_bar(stat = "identity", aes(fill = TOTALECONOMIC)) +
+  ggtitle("Economic Impact done by Storm Events") + 
+  xlab("Storm Events")+ 
+  ylab("Total Economic Impact in Millions of USD") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+#PARETO'S PRINCIPLE EXPLAINED
+
+TOTALECONOMICIMPACT %>% ggplot(aes(x = 1:nrow(TOTALECONOMICIMPACT), y = CUMULATIVE)) + geom_line()
+
